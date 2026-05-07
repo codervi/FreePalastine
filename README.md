@@ -13,5 +13,5 @@ This project is a web platform dedicated to raising awareness and creating a com
 - MS SQL Server
 - Google Fonts (Montserrat)
 
-## 🇵🇸 Justice for Palestine
+## 🍉✊ Justice for Palestine
 "A fairer world begins with a free Palestine."
