@@ -20,3 +20,25 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.main-wrapper {
+    /* Resmi buraya veriyoruz */
+    background-image: url('/Image/wallpaper.png');
+    /* RESMÝ TAM KAPLATAN BÜYÜLÜ KOMUTLAR */
+    background-size: cover; /* Boþluk býrakmadan alaný doldurur */
+    background-position: center; /* Merkeze odaklar */
+    background-repeat: no-repeat;
+    /* Navbar ve Footer arasýný tam doldurmasý için yüksekliði hesaplayalým */
+    /* 100vh (ekran boyu) - navbar yüksekliði - footer yüksekliði */
+    min-height: calc(100vh - 130px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Ýçerikleri (sloganý vs.) dikeyde ortalar */
+    /* RENK FARKI OLMASIN DÝYE: */
+    background-color: #ffffff;
+}
+
+    /* Container'ýn içindeki gereksiz beyazlýklarý ve geniþlik sýnýrlamasýný kaldýralým */
+    .main-wrapper .container {
+        background-color: transparent !important;
+    }

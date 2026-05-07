@@ -1,8 +1,10 @@
 ﻿using ForFreePalestine.Models;
 using ForFreePalestine.Models.DataContext;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+using System.Security.Claims;
 
 namespace ForFreePalestine.Controllers
 {
@@ -17,7 +19,10 @@ namespace ForFreePalestine.Controllers
             _passwordHasher = new PasswordHasher<UserInfo>();
         }
 
-        public IActionResult Index()
+        // --- KAYIT OLMA (REGISTER) BÖLÜMÜ ---
+
+        [HttpGet]
+        public IActionResult Index() // Kayıt Sayfası
         {
             return View();
         }
@@ -26,46 +31,82 @@ namespace ForFreePalestine.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Index(UserInfo model)
         {
-            // 1. ADIM: E-posta ve Kullanıcı Adı Kontrolü (Unique Check)
-            // Veritabanında bu mail veya kullanıcı adı zaten var mı?
             bool isEmailExist = _context.UserInfos.Any(x => x.Email == model.Email);
             bool isUserNameExist = _context.UserInfos.Any(x => x.UserName == model.UserName);
 
-            if (isEmailExist)
-            {
-                ModelState.AddModelError("Email", "Bu e-posta adresi zaten kullanımda.");
-            }
+            if (isEmailExist) ModelState.AddModelError("Email", "Bu e-posta adresi zaten kullanımda.");
+            if (isUserNameExist) ModelState.AddModelError("UserName", "Bu kullanıcı adı zaten alınmış.");
 
-            if (isUserNameExist)
-            {
-                ModelState.AddModelError("UserName", "Bu kullanıcı adı zaten alınmış.");
-            }
-
-            // 2. ADIM: Genel Validasyon Kontrolü
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // 3. ADIM: Şifreyi Hash'leme
                     model.Password = _passwordHasher.HashPassword(model, model.Password);
-
-                    // 4. ADIM: Kayıt İşlemi
                     _context.UserInfos.Add(model);
                     _context.SaveChanges();
 
-                    // Kayıt başarılıysa bir mesaj gönderip yönlendirelim
-                    TempData["SuccessMessage"] = "Kaydınız başarıyla tamamlandı!";
-                    return RedirectToAction("Index", "Home");
+                    TempData["SuccessMessage"] = "Kaydınız başarıyla tamamlandı! Giriş yapabilirsiniz.";
+                    return RedirectToAction("LoginSide"); // Kayıttan sonra giriş sayfasına gönder
                 }
                 catch (Exception ex)
                 {
-                    // Beklenmedik bir veritabanı hatası olursa (Loglama yapılabilir)
-                    ModelState.AddModelError("", "Kayıt sırasında teknik bir hata oluştu: " + ex.Message);
+                    ModelState.AddModelError("", "Kayıt hatası: " + ex.Message);
+                }
+            }
+            return View(model);
+        }
+
+        // --- GİRİŞ YAPMA (LOGIN) BÖLÜMÜ ---
+
+        [HttpGet]
+        public IActionResult LoginSide() // Giriş Sayfası GET
+        {
+            if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LoginSide(UserInfo model)
+        {
+            // Giriş yaparken sadece Email ve Password kontrolü yeterli olduğu için 
+            // ModelState.IsValid kontrolünü burada yapmıyoruz (çünkü modelin geri kalanı boş)
+
+            var user = _context.UserInfos.FirstOrDefault(u => u.Email == model.Email);
+
+            if (user != null)
+            {
+                var result = _passwordHasher.VerifyHashedPassword(user, user.Password, model.Password);
+                if (result == PasswordVerificationResult.Success)
+                {
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, user.UserName),
+                        new Claim(ClaimTypes.Email, user.Email),
+                        new Claim("FullName", user.UserRealName)
+                    };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties { IsPersistent = true };
+
+                    await HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+
+                    return RedirectToAction("Index", "Home");
                 }
             }
 
-            // Eğer bir hata varsa (mail varlığı veya eksik bilgi), aynı sayfaya hatalarla döner
+            ModelState.AddModelError("", "Incorrect password!");
             return View(model);
+        }
+
+
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
         }
     }
 }
