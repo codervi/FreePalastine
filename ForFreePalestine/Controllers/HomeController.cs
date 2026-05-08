@@ -18,7 +18,7 @@ namespace ForFreePalestine.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult History()
         {
             return View();
         }
