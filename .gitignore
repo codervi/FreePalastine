@@ -361,3 +361,25 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# --- Project Specific Custom Ignores ---
+
+# Hassas verilerin olduğu ayar dosyalarını gizle (Production verileri için)
+appsettings.Production.json
+appsettings.Development.json
+
+# Veritabanı dosyaları (Eğer LocalDB kullanıyorsan)
+*.mdf
+*.ldf
+
+# Kullanıcıya özel sırlar (User Secrets)
+# ASP.NET Core projelerinde hassas verileri burada tutmak en profesyonel yoldur
+**/secrets.json
+
+# İşletim sistemi kalıntıları
+.DS_Store
+Thumbs.db
+
+# Rider veya VS Code kullanıyorsan onların klasörleri
+.idea/
+.vscode/

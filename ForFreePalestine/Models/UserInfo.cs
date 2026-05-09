@@ -35,5 +35,7 @@ namespace ForFreePalestine.Models
         [Display(Name = "Confirm Password")]
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; }
+        [Display(Name = "User Role")]
+        public UserRoles Role { get; set; } = UserRoles.StandardUser; // Varsayılan olarak herkes 'Standart' başlasın
     }
 }

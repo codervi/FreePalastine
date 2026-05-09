@@ -14,17 +14,19 @@ namespace ForFreePalestine.Controllers
     {
         private readonly PageDBContext _context;
         private readonly PasswordHasher<UserInfo> _passwordHasher;
+        private readonly IConfiguration _configuration;
 
-        public LoginController(PageDBContext context)
+        public LoginController(PageDBContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
             _passwordHasher = new PasswordHasher<UserInfo>();
         }
 
         // --- KAYIT OLMA (REGISTER) BÖLÜMÜ ---
 
         [HttpGet]
-        public IActionResult Index() // Kayıt Sayfası
+        public IActionResult Index()
         {
             return View();
         }
@@ -43,12 +45,23 @@ namespace ForFreePalestine.Controllers
             {
                 try
                 {
+                    // [NOT]: Appsettings'den admin mailini okuyup rütbe ataması yapıyoruz.
+                    string adminEmail = _configuration["AdminSettings:AdminEmail"];
+                    if (model.Email.Trim().ToLower() == adminEmail.Trim().ToLower())
+                    {
+                        model.Role = UserRoles.SuperUser;
+                    }
+                    else
+                    {
+                        model.Role = UserRoles.StandardUser;
+                    }
+
                     model.Password = _passwordHasher.HashPassword(model, model.Password);
                     _context.UserInfos.Add(model);
                     _context.SaveChanges();
 
                     TempData["SuccessMessage"] = "Kaydınız başarıyla tamamlandı! Giriş yapabilirsiniz.";
-                    return RedirectToAction("LoginSide"); // Kayıttan sonra giriş sayfasına gönder
+                    return RedirectToAction("LoginSide");
                 }
                 catch (Exception ex)
                 {
@@ -61,7 +74,7 @@ namespace ForFreePalestine.Controllers
         // --- GİRİŞ YAPMA (LOGIN) BÖLÜMÜ ---
 
         [HttpGet]
-        public IActionResult LoginSide() // Giriş Sayfası GET
+        public IActionResult LoginSide()
         {
             if (User.Identity.IsAuthenticated) return RedirectToAction("Index", "Home");
             return View();
@@ -71,9 +84,6 @@ namespace ForFreePalestine.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LoginSide(UserInfo model)
         {
-            // Giriş yaparken sadece Email ve Password kontrolü yeterli olduğu için 
-            // ModelState.IsValid kontrolünü burada yapmıyoruz (çünkü modelin geri kalanı boş)
-
             var user = _context.UserInfos.FirstOrDefault(u => u.Email == model.Email);
 
             if (user != null)
@@ -85,7 +95,9 @@ namespace ForFreePalestine.Controllers
                     {
                         new Claim(ClaimTypes.Name, user.UserName),
                         new Claim(ClaimTypes.Email, user.Email),
-                        new Claim("FullName", user.UserRealName)
+                        new Claim("FullName", user.UserRealName),
+                        // [NOT]: Bu satırı ekledik. Sistemin kullanıcının rütbesini hatırlamasını sağlar.
+                        new Claim(ClaimTypes.Role, user.Role.ToString())
                     };
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -103,7 +115,6 @@ namespace ForFreePalestine.Controllers
             ModelState.AddModelError("", "Incorrect password!");
             return View(model);
         }
-
 
         public async Task<IActionResult> Logout()
         {

@@ -1,16 +1,22 @@
 using System.Diagnostics;
 using ForFreePalestine.Models;
+using ForFreePalestine.Models.DataContext;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ForFreePalestine.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly PageDBContext _pageDb;
 
-        public HomeController(ILogger<HomeController> logger)
+        // [DÜZELTME]: Ýki ayrý constructor yerine her iki servisi de alan TEK bir constructor býraktýk.
+        public HomeController(ILogger<HomeController> logger, PageDBContext pageDB)
         {
             _logger = logger;
+            _pageDb = pageDB;
         }
 
         public IActionResult Index()
@@ -20,6 +26,7 @@ namespace ForFreePalestine.Controllers
 
         public IActionResult History()
         {
+            // Ýleride buraya _pageDb.HistoryInfos.ToList() diyerek verileri çekeceðiz kanka ;)
             return View();
         }
 

@@ -8,5 +8,6 @@ namespace ForFreePalestine.Models.DataContext
         {
         }
         public DbSet<UserInfo> UserInfos { get; set; }
+        public DbSet<HistoryInfo> HistoryInfos { get; set; }
     }
 }
