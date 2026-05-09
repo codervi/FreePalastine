@@ -14,7 +14,8 @@ namespace ForFreePalestine.Models
         [Display(Name = "Description")]
         public string Description { get; set; }
         [Display(Name = "Event Date")]
-        public DateTime? EventDate { get; set; } // Olayın gerçekleşme tarihi
+        [DataType(DataType.Date)]
+        public DateTime EventDate { get; set; }
         [Display(Name = "Url")]
         public string? Url { get; set; }
         [Display(Name = "Image")]

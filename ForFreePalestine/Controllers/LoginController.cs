@@ -96,7 +96,6 @@ namespace ForFreePalestine.Controllers
                         new Claim(ClaimTypes.Name, user.UserName),
                         new Claim(ClaimTypes.Email, user.Email),
                         new Claim("FullName", user.UserRealName),
-                        // [NOT]: Bu satırı ekledik. Sistemin kullanıcının rütbesini hatırlamasını sağlar.
                         new Claim(ClaimTypes.Role, user.Role.ToString())
                     };
 
