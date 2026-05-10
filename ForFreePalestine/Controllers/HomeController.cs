@@ -22,17 +22,24 @@ namespace ForFreePalestine.Controllers
         {
             return View();
         }
+
         [HttpGet]
-        [Authorize(Roles = "SuperUser,Chef")]
         public IActionResult History()
         {
-            // Ýleride buraya _pageDb.HistoryInfos.ToList() diyerek verileri çekeceðiz kanka ;)
+            var historyList = _pageDb.HistoryInfos.OrderBy(x => x.EventDate).ToList();
+            return View(historyList);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "SuperUser,Chef")]
+        public IActionResult HistoryAdd()
+        {
             return View();
         }
 
         [HttpPost]
         [Authorize(Roles = "SuperUser,Chef")]
-        public async Task<IActionResult> History(HistoryInfo model, IFormFile imageFile)
+        public async Task<IActionResult> HistoryAdd(HistoryInfo model, IFormFile imageFile)
         {
             // 1. Validasyon barikatlarýný kaldýrýyoruz
             ModelState.Remove("Image");
@@ -62,7 +69,7 @@ namespace ForFreePalestine.Controllers
                     _pageDb.HistoryInfos.Add(model); // Önce listeye ekle
                     await _pageDb.SaveChangesAsync(); // Sonra DB'ye mühürle!
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("History", "Home");
                 }
             }
             catch (Exception ex)
@@ -73,6 +80,7 @@ namespace ForFreePalestine.Controllers
             // Buraya düþüyorsa bir þeyler ters gitmiþtir, verileri geri yolla kutular boþalmasýn
             return View(model);
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

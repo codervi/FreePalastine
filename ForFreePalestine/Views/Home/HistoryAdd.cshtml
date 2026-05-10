@@ -1,0 +1,71 @@
+﻿@model ForFreePalestine.Models.HistoryInfo
+
+@{
+    ViewData["Title"] = "HistoryAdd";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-dark text-white text-center">
+                    <h3 class="mb-0">Add Historical Event</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="HistoryAdd" method="post" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Title" class="form-label fw-bold"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Event title..." />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold"></label>
+                            <textarea asp-for="Description" class="form-control" rows="5" placeholder="Write the details here..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EventDate" class="form-label fw-bold">Event Date</label>
+                                <input asp-for="EventDate" type="date" class="form-control" />
+                                <span asp-validation-for="EventDate" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3 d-flex align-items-end">
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" asp-for="IsActive" checked />
+                                    <label class="form-check-label" asp-for="IsActive">Publish Now</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Url" class="form-label fw-bold">Reference Link (URL)</label>
+                            <input asp-for="Url" class="form-control" placeholder="https://..." />
+                            <span asp-validation-for="Url" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Upload Event Image</label>
+                            <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark btn-lg">Save Event</button>
+                            <a asp-action="Index" class="btn btn-outline-secondary">Back to Timeline</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
