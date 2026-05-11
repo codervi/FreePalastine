@@ -92,12 +92,13 @@ namespace ForFreePalestine.Controllers
                 if (result == PasswordVerificationResult.Success)
                 {
                     var claims = new List<Claim>
-                    {
-                        new Claim(ClaimTypes.Name, user.UserName),
-                        new Claim(ClaimTypes.Email, user.Email),
-                        new Claim("FullName", user.UserRealName),
-                        new Claim(ClaimTypes.Role, user.Role.ToString())
-                    };
+{
+    new Claim("UserId", user.UserId.ToString()), // <-- İŞTE EKSİK OLAN HAYAT KURTARAN SATIR BU!
+    new Claim(ClaimTypes.Name, user.UserName),
+    new Claim(ClaimTypes.Email, user.Email),
+    new Claim("FullName", user.UserRealName),
+    new Claim(ClaimTypes.Role, user.Role.ToString())
+};
 
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties { IsPersistent = true };

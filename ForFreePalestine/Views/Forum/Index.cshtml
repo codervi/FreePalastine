@@ -1,0 +1,91 @@
+﻿@model IEnumerable<ForFreePalestine.Models.ForumThread>
+
+@{
+    ViewData["Title"] = "Topluluk Forumu";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+        <h2 class="fw-bold" style="color: #2c3e50;">
+            <i class="bi bi-chat-square-text-fill text-success"></i> Topluluk Forumu
+        </h2>
+        @if (User.Identity.IsAuthenticated && (User.IsInRole("SuperUser") || User.IsInRole("Chef") || User.IsInRole("Assistant") || User.IsInRole("StandardUser")))
+        {
+            <a asp-action="Create" class="btn btn-success fw-bold shadow-sm">
+                <i class="bi bi-plus-lg"></i> Yeni Konu Aç
+            </a>
+        }
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="list-group list-group-flush">
+
+            @if (!Model.Any())
+            {
+                <div class="list-group-item p-5 text-center text-muted">
+                    <h5>Henüz hiç konu açılmamış.</h5>
+                    <p>İlk konuyu başlatan sen ol!</p>
+                </div>
+            }
+
+            @foreach (var item in Model)
+            {
+                <div class="list-group-item p-4 list-group-item-action">
+                    <div class="row align-items-center">
+
+                        <div class="col-md-8">
+                            <span class="badge bg-secondary mb-2 px-3 py-2">
+                                @Html.DisplayFor(modelItem => item.Category.Name)
+                            </span>
+
+                            <h4 class="mb-1">
+                                <a asp-action="Details" asp-route-id="@item.ThreadId" class="text-decoration-none text-dark fw-bold">
+                                    @Html.DisplayFor(modelItem => item.Title)
+                                </a>
+                            </h4>
+
+                            <small class="text-muted">
+                                <i class="bi bi-clock"></i> @item.CreatedDate.ToString("dd MMMM yyyy, HH:mm")
+                            </small>
+                        </div>
+
+                        <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                            <div class="d-flex flex-column align-items-md-end">
+                                <span class="fw-bold text-dark fs-5">
+                                    <i class="bi bi-person-circle"></i> @item.User.UserName
+                                </span>
+
+                                @{
+                                    string roleBadgeClass = "bg-secondary"; // Varsayılan renk
+                                    string displayRoleName = item.User.Role.ToString(); // Enum'ı yazıya çeviriyoruz
+
+                                    // Enum değerlerine göre kontrol (Enum adın UserRoles ise)
+                                    if (item.User.Role == ForFreePalestine.Models.UserRoles.SuperUser)
+                                    {
+                                        roleBadgeClass = "bg-danger"; // Admin kırmızı
+                                        displayRoleName = "SuperUser";
+                                    }
+                                    else if (item.User.Role == ForFreePalestine.Models.UserRoles.Chef)
+                                    {
+                                        roleBadgeClass = "bg-success"; // Chef yeşil
+                                        displayRoleName = "Chef";
+                                    }
+                                }
+                                <span class="badge @roleBadgeClass mt-1 px-3">@displayRoleName</span>
+                            </div>
+
+                            @if (User.Identity.IsAuthenticated && (User.IsInRole("SuperUser") || User.IsInRole("Chef")))
+                            {
+                                <div class="mt-2">
+                                    <a asp-action="Edit" asp-route-id="@item.ThreadId" class="text-primary text-decoration-none small me-2">Düzenle</a>
+                                    <a asp-action="Delete" asp-route-id="@item.ThreadId" class="text-danger text-decoration-none small">Sil</a>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
