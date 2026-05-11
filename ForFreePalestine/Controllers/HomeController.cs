@@ -81,6 +81,70 @@ namespace ForFreePalestine.Controllers
             return View(model);
         }
 
+        // --- SÝLME ÝÞLEMÝ ---
+        [HttpPost]
+        [Authorize(Roles = "SuperUser,Chef")]
+        public async Task<IActionResult> HistoryDelete(int id)
+        {
+            var eventItem = await _pageDb.HistoryInfos.FindAsync(id);
+            if (eventItem != null)
+            {
+                _pageDb.HistoryInfos.Remove(eventItem);
+                await _pageDb.SaveChangesAsync();
+            }
+            return RedirectToAction("History");
+        }
+
+        // --- DÜZENLEME SAYFASINI AÇAN METOT (GET) ---
+        [HttpGet]
+        [Authorize(Roles = "SuperUser,Chef")]
+        public async Task<IActionResult> HistoryEdit(int id)
+        {
+            // Veritabanýndan o ID'li kaydý buluyoruz
+            var item = await _pageDb.HistoryInfos.FindAsync(id);
+
+            if (item == null) return NotFound();
+
+            return View(item); // Verileri sayfaya gönderiyoruz
+        }
+
+        // --- KAYDETME ÝÞLEMÝNÝ YAPAN METOT (POST) ---
+        [HttpPost]
+        [Authorize(Roles = "SuperUser,Chef")]
+        public async Task<IActionResult> HistoryEdit(HistoryInfo model, IFormFile? ImageFile)
+        {
+            if (ModelState.IsValid)
+            {
+                // Veritabanýndaki orijinal kaydý getiriyoruz
+                var existingItem = await _pageDb.HistoryInfos.FindAsync(model.HistoryId);
+                if (existingItem == null) return NotFound();
+
+                // Resim güncellenmiþse yenisini kaydet
+                if (ImageFile != null)
+                {
+                    var extension = Path.GetExtension(ImageFile.FileName);
+                    var newImageName = Guid.NewGuid() + extension;
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Image/history", newImageName);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await ImageFile.CopyToAsync(stream);
+                    }
+                    existingItem.Image = newImageName;
+                }
+
+                // Diðer alanlarý güncelliyoruz
+                existingItem.Title = model.Title;
+                existingItem.Description = model.Description;
+                existingItem.EventDate = model.EventDate;
+                existingItem.Url = model.Url; // Buraya virgüllü linkleri yazýnca JS otomatik parçalayacak
+
+                await _pageDb.SaveChangesAsync();
+                return RedirectToAction("History"); // Ýþlem bitince listeye dön
+            }
+            return View(model);
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

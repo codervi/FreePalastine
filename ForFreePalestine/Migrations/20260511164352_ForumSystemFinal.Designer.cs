@@ -4,6 +4,7 @@ using ForFreePalestine.Models.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ForFreePalestine.Migrations
 {
     [DbContext(typeof(PageDBContext))]
-    partial class PageDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260511164352_ForumSystemFinal")]
+    partial class ForumSystemFinal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,11 +100,14 @@ namespace ForFreePalestine.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UsersUserId")
+                        .HasColumnType("int");
+
                     b.HasKey("ThreadId");
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UsersUserId");
 
                     b.ToTable("ForumThreads");
                 });
@@ -211,15 +217,15 @@ namespace ForFreePalestine.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ForFreePalestine.Models.UserInfo", "User")
+                    b.HasOne("ForFreePalestine.Models.UserInfo", "Users")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UsersUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
 
-                    b.Navigation("User");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("ForFreePalestine.Models.ForumCategory", b =>
