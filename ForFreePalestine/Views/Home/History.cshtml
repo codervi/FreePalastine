@@ -63,8 +63,8 @@
                                             </a>
 
                                             <form asp-action="HistoryDelete" asp-route-id="@item.HistoryId" method="post" style="display:inline;"
-                                                  onsubmit="return confirm('Kanka bak emin misin? Bu tarih kalıcı olarak silinecek!')">
-                                                <button type="submit" class="btn btn-outline-danger btn-sm">Sil</button>
+                                                  onsubmit="return confirm('This date will be permanently deleted!')">
+                                                <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
                                             </form>
                                         }
                                     </div>
@@ -92,13 +92,13 @@
                 </div>
 
                 <div id="urlContainer" class="mt-4 text-start px-3 border-top pt-3" style="display:none;">
-                    <span class="text-muted small d-block mb-2 fw-bold text-uppercase">Kaynaklar / Daha Fazla Bilgi:</span>
+                    <span class="text-muted small d-block mb-2 fw-bold text-uppercase">Sources / More Information:</span>
                     <div id="modalUrlList"></div>
                 </div>
             </div>
             <div class="modal-footer bg-light">
                 <small id="modalDate" class="text-muted me-auto"></small>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

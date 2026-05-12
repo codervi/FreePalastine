@@ -23,7 +23,7 @@ namespace ForFreePalestine.Controllers
             _passwordHasher = new PasswordHasher<UserInfo>();
         }
 
-        // --- KAYIT OLMA (REGISTER) BÖLÜMÜ ---
+        // --- REGISTRATION SECTION ---
 
         [HttpGet]
         public IActionResult Index()
@@ -45,7 +45,7 @@ namespace ForFreePalestine.Controllers
             {
                 try
                 {
-                    // [NOT]: Appsettings'den admin mailini okuyup rütbe ataması yapıyoruz.
+                    // [NOTE]: We read the admin email from Appsettings and assign ranks.
                     string adminEmail = _configuration["AdminSettings:AdminEmail"];
                     if (model.Email.Trim().ToLower() == adminEmail.Trim().ToLower())
                     {
@@ -71,7 +71,7 @@ namespace ForFreePalestine.Controllers
             return View(model);
         }
 
-        // --- GİRİŞ YAPMA (LOGIN) BÖLÜMÜ ---
+        // --- LOGIN SECTION ---
 
         [HttpGet]
         public IActionResult LoginSide()
@@ -93,7 +93,7 @@ namespace ForFreePalestine.Controllers
                 {
                     var claims = new List<Claim>
 {
-    new Claim("UserId", user.UserId.ToString()), // <-- İŞTE EKSİK OLAN HAYAT KURTARAN SATIR BU!
+    new Claim("UserId", user.UserId.ToString()),
     new Claim(ClaimTypes.Name, user.UserName),
     new Claim(ClaimTypes.Email, user.Email),
     new Claim("FullName", user.UserRealName),

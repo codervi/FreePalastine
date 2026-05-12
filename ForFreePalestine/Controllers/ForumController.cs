@@ -36,7 +36,6 @@ namespace ForFreePalestine.Controllers
         [Authorize(Roles = "SuperUser,Chef,Assistant,StandardUser")]
         public IActionResult Create(ForFreePalestine.Models.ForumThread model)
         {
-            // ASP.NET Core'un formda olmayan bağlı tablolar için arıza çıkarmasını engelliyoruz
             ModelState.Remove("User");
             ModelState.Remove("Category");
             ModelState.Remove("Replies");
@@ -61,8 +60,6 @@ namespace ForFreePalestine.Controllers
                 }
             }
 
-            // İşlem buraya kadar düştüyse (ya model hatalıdır ya da catch bloğuna girmiştir):
-            // Kategorileri tekrar doldurup, adamın yazdığı yazılarla (model) birlikte formu geri gönder.
             var categories = _context.ForumCategories.ToList();
             ViewBag.Categories = new SelectList(categories, "CategoryId", "Name", model.CategoryId);
             return View(model);

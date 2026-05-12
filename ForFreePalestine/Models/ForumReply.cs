@@ -8,18 +8,18 @@ namespace ForFreePalestine.Models
         [Key]
         public int ReplyId { get; set; }
 
-        [Required(ErrorMessage = "Mesaj alanı boş bırakılamaz.")]
+        [Required(ErrorMessage = "Content cannot be empty.")]
         public string Content { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        // Hangi konuya yazıldı?
+        // What topic was it written about?
         public int ThreadId { get; set; }
         [ForeignKey("ThreadId")]
         public virtual ForumThread Thread { get; set; }
 
-        // Kim yazdı?
-        // string olan yeri int yapıyoruz
+        //  Who wrote this? 
+        // We're changing the string part to int.
         public int UserId { get; set; }
         [ForeignKey("UserId")]
         public virtual UserInfo User { get; set; }

@@ -7,12 +7,10 @@ namespace ForFreePalestine.Models
         [Key]
         public int CategoryId { get; set; }
 
-        [Required(ErrorMessage = "Kategori adı boş olamaz.")]
-        public string Name { get; set; } // Örn: Genel, Tarih, Haberler
+        [Required(ErrorMessage = "Category names cannot be empty.")]
+        [StringLength(40, ErrorMessage = "Category names cannot exceed 40 characters.")]
+        public string Name { get; set; } 
 
-        public string? Description { get; set; } // Kategori ne işe yarar?
-
-        // Bu kategorinin altındaki konular
         public virtual List<ForumThread> Threads { get; set; } = new List<ForumThread>();
     }
 }

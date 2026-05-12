@@ -9,16 +9,16 @@ namespace ForFreePalestine.Models.DataContext
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder); // Bu satırın olduğundan emin ol
+            base.OnModelCreating(modelBuilder);
 
-            // ForumReply ile User arasındaki silme döngüsünü kırıyoruz
+            // We are breaking the deletion loop between ForumReply and User.
             modelBuilder.Entity<ForumReply>()
                 .HasOne(r => r.User)
                 .WithMany()
                 .HasForeignKey(r => r.UserId)
-                .OnDelete(DeleteBehavior.NoAction); // Döngüyü kıran sihirli dokunuş
+                .OnDelete(DeleteBehavior.NoAction); // The magical touch that breaks the loop
 
-            // ForumReply ile Thread arasındaki silme döngüsünü de sağlama alalım
+            // Let's also ensure the deletion loop between ForumReply and Thread
             modelBuilder.Entity<ForumReply>()
                 .HasOne(r => r.Thread)
                 .WithMany(t => t.Replies)

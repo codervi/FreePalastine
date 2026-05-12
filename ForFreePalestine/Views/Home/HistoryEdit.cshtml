@@ -1,13 +1,13 @@
 ﻿@model ForFreePalestine.Models.HistoryInfo
 
 @{
-    ViewData["Title"] = "Düzenle";
+    ViewData["Title"] = "Update";
 }
 
 <div class="container mt-5">
     <div class="card shadow border-0 mx-auto" style="max-width: 800px;">
         <div class="card-header bg-dark text-white text-center py-3">
-            <h4 class="mb-0">Tarihi Olayı Güncelle</h4>
+            <h4 class="mb-0">Update the Historical Event</h4>
         </div>
         <div class="card-body p-4">
             <form asp-action="HistoryEdit" method="post" enctype="multipart/form-data">
@@ -15,28 +15,28 @@
                 <input type="hidden" asp-for="Image" />
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Olay Başlığı</label>
+                    <label class="form-label fw-bold">Event Headline</label>
                     <input asp-for="Title" class="form-control" />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Tarih</label>
+                    <label class="form-label fw-bold">Date</label>
                     <input asp-for="EventDate" type="date" class="form-control" />
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Açıklama</label>
+                    <label class="form-label fw-bold">Description</label>
                     <textarea asp-for="Description" class="form-control" rows="8"></textarea>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Kaynak Linkleri (Virgül ile ayırın)</label>
+                    <label class="form-label fw-bold">Source Links (Separate with commas)</label>
                     <input asp-for="Url" class="form-control" placeholder="site1.com, site2.org" />
-                    <small class="text-muted">Birden fazla link varsa aralarına virgül koy kanka.</small>
+                    <small class="text-muted">If there are multiple links, separate them with commas.</small>
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-bold">Görsel Değiştir (Opsiyonel)</label>
+                    <label class="form-label fw-bold">Change Image (Optional)</label>
                     <input type="file" name="ImageFile" class="form-control" />
                     @if (!string.IsNullOrEmpty(Model.Image))
                     {
@@ -45,8 +45,8 @@
                 </div>
 
                 <div class="d-flex justify-content-between">
-                    <a asp-action="History" class="btn btn-outline-secondary">Vazgeç</a>
-                    <button type="submit" class="btn btn-primary px-5 text-uppercase fw-bold">Güncelle</button>
+                    <a asp-action="History" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-5 text-uppercase fw-bold">Update</button>
                 </div>
             </form>
         </div>

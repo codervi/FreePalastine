@@ -9,22 +9,23 @@ namespace ForFreePalestine.Models
         public int ThreadId { get; set; }
 
         [Required]
+        [StringLength(50, ErrorMessage = "Title cannot exceed 50 characters.")]
         public string Title { get; set; }
 
         [Required]
+        [StringLength(1000, ErrorMessage = "Content cannot exceed 1000 characters.")]
         public string Content { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        // Konuyu açan kişi
+        // The person who brought up the topic
         public int UserId { get; set; }
 
-        [ForeignKey("UserId")] // Açık açık EF Core'a "Üstteki UserId'yi kullan" diyoruz.
-        public virtual UserInfo User { get; set; } // 'Users' yerine 'User' (Tekil) yapmak her zaman en temizidir.
+        [ForeignKey("UserId")] // 
+        public virtual UserInfo User { get; set; }
 
-        // Cevaplar listesi
+        // List of answers
         public virtual List<ForumReply> Replies { get; set; }
-        // ForumThread.cs içine eklenecekler:
 
         public int CategoryId { get; set; } // Foreign Key
         public virtual ForumCategory Category { get; set; } // Navigation Property

@@ -41,11 +41,11 @@ namespace ForFreePalestine.Controllers
         [Authorize(Roles = "SuperUser,Chef")]
         public async Task<IActionResult> HistoryAdd(HistoryInfo model, IFormFile imageFile)
         {
-            // 1. Validasyon barikatlarýný kaldýrýyoruz
+            // 1. We are removing validation barriers.
             ModelState.Remove("Image");
             ModelState.Remove("CreatedDate");
 
-            // 2. Tarihi manuel çakýyoruz
+            // 2. We add the date manually.
             model.CreatedDate = DateTime.Now;
 
             try
@@ -63,11 +63,10 @@ namespace ForFreePalestine.Controllers
                     model.Image = fileName;
                 }
 
-                // 3. ÝÞTE O UNUTULAN KRÝTÝK NOKTA:
                 if (ModelState.IsValid)
                 {
-                    _pageDb.HistoryInfos.Add(model); // Önce listeye ekle
-                    await _pageDb.SaveChangesAsync(); // Sonra DB'ye mühürle!
+                    _pageDb.HistoryInfos.Add(model); 
+                    await _pageDb.SaveChangesAsync(); 
 
                     return RedirectToAction("History", "Home");
                 }
@@ -76,12 +75,10 @@ namespace ForFreePalestine.Controllers
             {
                 ModelState.AddModelError("", "Lan hata çýktý: " + ex.Message);
             }
-
-            // Buraya düþüyorsa bir þeyler ters gitmiþtir, verileri geri yolla kutular boþalmasýn
             return View(model);
         }
 
-        // --- SÝLME ÝÞLEMÝ ---
+        // --- DELETE PROCESS ---
         [HttpPost]
         [Authorize(Roles = "SuperUser,Chef")]
         public async Task<IActionResult> HistoryDelete(int id)
@@ -95,7 +92,7 @@ namespace ForFreePalestine.Controllers
             return RedirectToAction("History");
         }
 
-        // --- DÜZENLEME SAYFASINI AÇAN METOT (GET) ---
+        // --- METHOD THAT OPENS THE EDITING PAGE (GET) ---
         [HttpGet]
         [Authorize(Roles = "SuperUser,Chef")]
         public async Task<IActionResult> HistoryEdit(int id)
@@ -105,21 +102,20 @@ namespace ForFreePalestine.Controllers
 
             if (item == null) return NotFound();
 
-            return View(item); // Verileri sayfaya gönderiyoruz
+            return View(item); 
         }
 
-        // --- KAYDETME ÝÞLEMÝNÝ YAPAN METOT (POST) ---
+        // --- METHOD THAT OPENS THE EDITING PAGE (POST) ---
         [HttpPost]
         [Authorize(Roles = "SuperUser,Chef")]
         public async Task<IActionResult> HistoryEdit(HistoryInfo model, IFormFile? ImageFile)
         {
             if (ModelState.IsValid)
             {
-                // Veritabanýndaki orijinal kaydý getiriyoruz
                 var existingItem = await _pageDb.HistoryInfos.FindAsync(model.HistoryId);
                 if (existingItem == null) return NotFound();
 
-                // Resim güncellenmiþse yenisini kaydet
+                // If the image has been updated, save the new one.
                 if (ImageFile != null)
                 {
                     var extension = Path.GetExtension(ImageFile.FileName);
@@ -133,14 +129,13 @@ namespace ForFreePalestine.Controllers
                     existingItem.Image = newImageName;
                 }
 
-                // Diðer alanlarý güncelliyoruz
                 existingItem.Title = model.Title;
                 existingItem.Description = model.Description;
                 existingItem.EventDate = model.EventDate;
-                existingItem.Url = model.Url; // Buraya virgüllü linkleri yazýnca JS otomatik parçalayacak
+                existingItem.Url = model.Url;
 
                 await _pageDb.SaveChangesAsync();
-                return RedirectToAction("History"); // Ýþlem bitince listeye dön
+                return RedirectToAction("History");
             }
             return View(model);
         }

@@ -7,12 +7,12 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
         <h2 class="fw-bold" style="color: #2c3e50;">
-            <i class="bi bi-chat-square-text-fill text-success"></i> Topluluk Forumu
+            <i class="bi bi-chat-square-text-fill text-success"></i> Community Forum
         </h2>
         @if (User.Identity.IsAuthenticated && (User.IsInRole("SuperUser") || User.IsInRole("Chef") || User.IsInRole("Assistant") || User.IsInRole("StandardUser")))
         {
             <a asp-action="Create" class="btn btn-success fw-bold shadow-sm">
-                <i class="bi bi-plus-lg"></i> Yeni Konu Aç
+                <i class="bi bi-plus-lg"></i> Create New Topic
             </a>
         }
     </div>
@@ -23,8 +23,7 @@
             @if (!Model.Any())
             {
                 <div class="list-group-item p-5 text-center text-muted">
-                    <h5>Henüz hiç konu açılmamış.</h5>
-                    <p>İlk konuyu başlatan sen ol!</p>
+                    <p>Be the first to start a topic!</p>
                 </div>
             }
 
@@ -56,18 +55,18 @@
                                 </span>
 
                                 @{
-                                    string roleBadgeClass = "bg-secondary"; // Varsayılan renk
-                                    string displayRoleName = item.User.Role.ToString(); // Enum'ı yazıya çeviriyoruz
+                                    string roleBadgeClass = "bg-secondary"; 
+                                    string displayRoleName = item.User.Role.ToString(); 
 
-                                    // Enum değerlerine göre kontrol (Enum adın UserRoles ise)
+                                    
                                     if (item.User.Role == ForFreePalestine.Models.UserRoles.SuperUser)
                                     {
-                                        roleBadgeClass = "bg-danger"; // Admin kırmızı
+                                        roleBadgeClass = "bg-danger"; 
                                         displayRoleName = "SuperUser";
                                     }
                                     else if (item.User.Role == ForFreePalestine.Models.UserRoles.Chef)
                                     {
-                                        roleBadgeClass = "bg-success"; // Chef yeşil
+                                        roleBadgeClass = "bg-success"; 
                                         displayRoleName = "Chef";
                                     }
                                 }
